@@ -1,0 +1,9 @@
+aws budgets create-budget \
+    --account-id $AWS_ACCOUNT_ID \
+    --budget file://week0/json/budget.json \
+    --notifications-with-subscribers file://week0/json/notifications-with-subscribers.json
+
+aws sns subscribe \
+    --topic-arn arn:aws:sns:us-east-1:919283008119:cpb-billing-alarm \
+    --protocol email \
+    --notification-endpoint livinglove92@yahoo.com
