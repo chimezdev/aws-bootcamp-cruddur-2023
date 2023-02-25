@@ -2,13 +2,13 @@
 
 App containerization provides Flexibility, Ease of Management, Speed of Transportation, Economies of Scale, and Durability.
 DockerHub is a central container registry for storing docker container images. It follows the OCI standard for registries.
-[Docker](../_docs/assets/docker.png)
+![Docker](../_docs/assets/docker.png)
 # Running our application locally
 ## Run the backend application locally
 - `cd` in the **backend-flask** directory and run `pip3 install -r requirements.txt` to install the packages
 - run `python3 -m flask run --host=0.0.0.0 --port=4567` # shortcut way of running flask app
 - click on the **PORT** tab in the terminal and click on the padlock icon in the url to open the link to the public
-[PORTS tab](../_docs/assets/port-tab.png)
+![PORTS tab](../_docs/assets/port-tab.png)
 - click on the link to open it. this should not open because we did not provide the required environment variables.
 - in your terminal run, `export FRONTEND_URL="*"` and `export BACKEND_URL="*"`
 - run `python3 -m flask run --host=0.0.0.0 --port=4567` to start the server again 
@@ -112,4 +112,4 @@ DockerHub is a central container registry for storing docker container images. I
 - go to the 'PORT' tab and confirm that both urls with ports 3000 and 4567 are running and open to the public
 - click on the frontend(port 3000) url to open in a new tab
 - you should see our app up with data showing that our frontend is able to communicate with the backend.
-[homepage](../_docs/assets/homepage-cruddur.png)
+![homepage](../_docs/assets/homepage-cruddur.png)
