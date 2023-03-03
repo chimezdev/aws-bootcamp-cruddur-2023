@@ -114,7 +114,7 @@ DockerHub is a central container registry for storing docker container images. I
 - you should see our app up with data showing that our frontend is able to communicate with the backend.
 ![homepage](../_docs/assets/homepage-cruddur.png)
 
-#  
+#  To install the postgres client into Gitpod
 ``` 
     - name: postgres
         init: |
