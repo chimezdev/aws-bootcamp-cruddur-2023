@@ -90,3 +90,65 @@ To put span around home-activities endpoint to show return of hard-coded data to
 ![heatmap](../_docs/assets/heatmap-honeycomb.png)
 
 ## Instrument XRay
+"Analyze and debug production and distributed applications. AWS X-Ray provides a complete view of requests as they travel through your application and filters visual data across payloads, functions, traces, services, APIs, and more with no-code and low-code motions." 
+[AWS XRay python SDK](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/xray.html)
+- install the **aws-xray-sdk** by adding 'aws-xray-sdk' to the requirement.txt and running `pip install -r requirements.txt`
+- export some env. variable `export AWS_REGION="us-east-1"` and `gp env AWS_REGION="us-east-1"`
+
+## Add the middleware to our flask application
+[XRay Middleware to flask app](https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-python-middleware.html)
+- add the following block to the **app.py** file
+```
+    from aws_xray_sdk.core import xray_recorder
+    from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
+
+    xray_url = os.getenv("AWS_XRAY_URL")
+    xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
+    XRayMiddleware(app, xray_recorder)
+```
+- The above tells X-Ray recorder to trace requests served by your Flask application with the default sampling rate.
+- create aws/json/xray.json to set up AWS XRay resources.
+```
+    {
+        "SamplingRule": {
+            "RuleName": "Cruddur",
+            "ResourceARN": "*",
+            "Priority": 9000,
+            "FixedRate": 0.1,
+            "ReservoirSize": 5,
+            "ServiceName": "backend-fask",
+            "ServiceType": "*",
+            "Host": "*",
+            "HTTPMethod": "*",
+            "URLPath": "*",
+            "Version": 1
+        }
+    }
+```
+- Create xray group. Xray new console is now integrated with cloudwatch so this group will create in the cloudwatch console.
+- go to the xray console. If it takes you to the 'welcome' page, just click on **Get Started** and then **cancel**
+- ensure you are on the region you exported earlier.
+- Then on your terminal, run ```aws xray create-group \
+   --group-name "Cruddur" \
+   --filter-expression "service(\"backend-flask\")"
+   ```
+- run `aws xray create-sampling-rule --cli-input-json file://aws/json/xray.json` to create sampling rule on xray
+- Install xray daemon by adding this to the **docker-compose.yml** file
+```
+    xray-daemon:
+        image: "amazon/aws-xray-daemon"
+        environment:
+            AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+            AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+            AWS_REGION: "us-east-1"
+        command:
+            - "xray -o -b xray-daemon:2000"
+        ports:
+            - 2000:2000/udp
+```
+- Add the following env variable to the **docker-compose** file
+```
+      AWS_XRAY_URL: "*4567-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}*" 
+      AWS_XRAY_DAEMON_ADDRESS: "xray-daemon:2000"
+```
+- #AWS_XRAY_URL is a dynamic naming that we passed in **app.py**
