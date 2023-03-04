@@ -89,3 +89,4 @@ To put span around home-activities endpoint to show return of hard-coded data to
 ![trace result](../_docs/assets/span-attribute.png)
 ![heatmap](../_docs/assets/heatmap-honeycomb.png)
 
+## Instrument XRay
