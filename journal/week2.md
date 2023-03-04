@@ -71,3 +71,21 @@ As a result I was getting the error message, '3000 port not found'
 It took me a while to debug this, but in the end, I got it sorted out.
 docker compose doesn't find the environment variables when I write-click on the file and click `compose up`
 What I did instead was to run `docker compose up` from the terminal that I exported the env variables from.
+
+## Acquiring a Tracer.
+To put span around home-activities endpoint to show return of hard-coded data to show in our trace story. 
+- open **'home_activities.py'**
+- go to this [honeycomb python doc](https://docs.honeycomb.io/getting-data-in/opentelemetry/python/)
+- scroll down and copy the code and paste in the 'home_activities.py' file.
+```
+    from opentelemetry import trace
+    tracer = trace.get_tracer("home.activities")
+
+```
+- Then copy `with tracer.start_as_current_span("home-activities-mock-data"):` into the **def run():** block.
+- Add `span = trace.get_current_span()` below the above code and make sure the block is well indented.
+- Add attributes to the span:
+    - add the line `span.set_attribute("app.result_length", len(results))` at the buttom of **home_activities.py**, just before the return line.
+![trace result](../_docs/assets/span-attribute.png)
+![heatmap](../_docs/assets/heatmap-honeycomb.png)
+
