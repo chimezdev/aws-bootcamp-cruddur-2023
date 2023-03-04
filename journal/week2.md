@@ -44,5 +44,21 @@ Honeycomb offers free-tier pricing option. To setup a Honeycomb account:
     OTEL_SERVICE_NAME: "your-service-name"
     OTEL_EXPORTER_OTLP_ENDPOINT: "https://api.honeycomb.io"
     OTEL_EXPORTER_OTLP_HEADERS: "x-honeycomb-team=${HONEYCOMB_API_KEY}"
-    python app.py
 ```
+- Next, go to the 'frontend-react-js' directory and run `npm install`
+- run `cd ..` and then run `docker-compose up`
+- after the build completes, go to the **PORT** tab amd open the ports for public accessibility. To automate this:
+- add the following to the *gitpod.yml* file
+```
+    ports:
+        - name: frontend
+          port: 3000
+          onOpen: open-browser
+          visibility: public
+        - name: backend
+          port:4567
+          visibility: public
+        - name: xray-daemon
+          port: 2000
+          visibility: public
+
