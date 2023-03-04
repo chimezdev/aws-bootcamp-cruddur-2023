@@ -61,4 +61,13 @@ Honeycomb offers free-tier pricing option. To setup a Honeycomb account:
         - name: xray-daemon
           port: 2000
           visibility: public
+```
+- Now run `docker-compose up`
+- After build the ports will be made public and the frontend will automatically open on a new tab
 
+#challeng
+I loaded a new github workspace and the FRONTEND_URL and BACKEND_URL environment variables were not set.
+As a result I was getting the error message, '3000 port not found' 
+It took me a while to debug this, but in the end, I got it sorted out.
+docker compose doesn't find the environment variables when I write-click on the file and click `compose up`
+What I did instead was to run `docker compose up` from the terminal that I exported the env variables from.
