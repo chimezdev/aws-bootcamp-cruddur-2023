@@ -2,6 +2,7 @@ from flask import Flask
 from flask import request
 from flask_cors import CORS, cross_origin
 import os
+import http.client as http
 
 from services.home_activities import *
 from services.notifications_activities import *
@@ -48,6 +49,7 @@ XRayMiddleware(app, xray_recorder)
 FlaskInstrumentor().instrument_app(app)
 RequestsInstrumentor().instrument()
 
+os.environ['AWS_XRAY_CONTEXT_MISSING'] = 'LOG_ERROR'
 frontend = os.getenv('FRONTEND_URL')
 backend = os.getenv('BACKEND_URL')
 origins = [frontend, backend]
