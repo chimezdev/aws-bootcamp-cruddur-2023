@@ -65,12 +65,13 @@ Honeycomb offers free-tier pricing option. To setup a Honeycomb account:
 - Now run `docker-compose up`
 - After build the ports will be made public and the frontend will automatically open on a new tab
 
-#challeng
+#challenges
 I loaded a new github workspace and the FRONTEND_URL and BACKEND_URL environment variables were not set.
 As a result I was getting the error message, '3000 port not found' 
 It took me a while to debug this, but in the end, I got it sorted out.
 docker compose doesn't find the environment variables when I write-click on the file and click `compose up`
 What I did instead was to run `docker compose up` from the terminal that I exported the env variables from.
+AWS CLI doesn't automatically install when I launch gitpod. After several troubleshooting, I was able to resolve it by removing this line of code. `cd /workspace` from the **gitpod.yml** as it is not necessary because the working directory is already set to the root of the Gitpod workspace ($THEIA_WORKSPACE_ROOT)
 
 ## Acquiring a Tracer.
 To put span around home-activities endpoint to show return of hard-coded data to show in our trace story. 
