@@ -1,2 +1,2 @@
 docker/dynamodb/*
-aws
+aws/dist

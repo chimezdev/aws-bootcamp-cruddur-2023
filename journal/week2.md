@@ -153,3 +153,6 @@ To put span around home-activities endpoint to show return of hard-coded data to
       AWS_XRAY_DAEMON_ADDRESS: "xray-daemon:2000"
 ```
 - #AWS_XRAY_URL is a dynamic naming that we passed in **app.py**
+- start docker compose and view xray container log, you should see this in your terminal
+![XRay log](../_docs/assets/xray-log.png)
+![XRay console log](../_docs/assets/xray-console.png)
