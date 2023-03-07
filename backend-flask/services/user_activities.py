@@ -5,8 +5,8 @@ class UserActivities:
   def run(user_handle):
     #xray----
     with xray_recorder.in_segment('user_activities') as segment:
-      curren_user = {"user_handle": "Chimez Andrew"}
-      segment.put_metadata('current_user', curren_user, 'cruddur')
+      current_user = {"user_handle": "Chimez Andrew"}
+      segment.put_metadata('current_user', current_user, 'cruddur')
       model = {
         'errors': None,
         'data': None
