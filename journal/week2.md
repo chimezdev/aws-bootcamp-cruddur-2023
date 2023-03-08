@@ -72,6 +72,9 @@ It took me a while to debug this, but in the end, I got it sorted out.
 docker compose doesn't find the environment variables when I write-click on the file and click `compose up`
 What I did instead was to run `docker compose up` from the terminal that I exported the env variables from.
 AWS CLI doesn't automatically install when I launch gitpod. After several troubleshooting, I was able to resolve it by removing this line of code. `cd /workspace` from the **gitpod.yml** as it is not necessary because the working directory is already set to the root of the Gitpod workspace ($THEIA_WORKSPACE_ROOT)
+I am having challenge implementing xray segment and subsegment, I continue to get , 'SegmentNotFound'
+
+
 
 ## Acquiring a Tracer.
 To put span around home-activities endpoint to show return of hard-coded data to show in our trace story. 
@@ -156,3 +159,59 @@ To put span around home-activities endpoint to show return of hard-coded data to
 - start docker compose and view xray container log, you should see this in your terminal
 ![XRay log](../_docs/assets/xray-log.png)
 ![XRay console log](../_docs/assets/xray-console.png)
+
+# CloudWatch Log
+A tightly integrated, log management service built by into and by AWS. "While watchtower is a lightweight adapter between the Python logging system and CloudWatch Logs." It lets you easily plug your app into cloudwatch.
+## Install watchtower
+- add **watchtower** to your requirements.txt file
+- cd into the backend-flask directory and run `pip install -r requirements.txt`
+- copy the following blocks of code and add to your **app.py** file
+```
+    import watchtower
+    import logging
+    from time import strftime
+```
+- Configuring Logger to Use CloudWatch and setup *cruddur* log group within cloudwatch log.
+```
+    LOGGER = logging.getLogger(__name__)
+    LOGGER.setLevel(logging.DEBUG)
+    console_handler = logging.StreamHandler()
+    cw_handler = watchtower.CloudWatchLogHandler(log_group='cruddur')
+    LOGGER.addHandler(console_handler)
+    LOGGER.addHandler(cw_handler)
+    LOGGER.info("some message")
+```
+- log an error after every single request
+```
+@app.after_request
+def after_request(response):
+    timestamp = strftime('[%Y-%b-%d %H:%M]')
+    LOGGER.error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
+    return response
+```
+- copy and paste the *@app.after_request* block above into the ***home_activities.py*** file to. Don't forget to import logging.
+- then add *logger* as a parameter to the **def run()** statement in ***home_activities.py*** and add this line below it `logger.info("HomeActivities")`
+- add *logger=LOGGER* as a parameter to ***data = HomeActivities.run(logger=LOGGER)*** statement in the **'def data_home'** block of **'app.py** file.
+
+- setup up some envers for watchtower in the docker compose file.
+- copy and paste the following there 
+```
+    AWS_DEFAULT_REGION: "${AWS_DEFAULT_REGION}"
+    AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+    AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+```
+- start docker compose
+- go to the AWS cloudwatch log console and find the 'cruddur' log group.
+![cruddur log group](../_docs/assets/cloudwatchlog.png)
+- To turn off the logging if you are concerned about AWS spending(you should be):
+    - remove the **'logger'** and **'logger=LOGGER'** where you added them as parameters and comment **'logger.info("HomeActivities")'**
+    - also comment this block out
+    ```
+        LOGGER = logging.getLogger(__name__)
+        LOGGER.setLevel(logging.DEBUG)
+        console_handler = logging.StreamHandler()
+        cw_handler = watchtower.CloudWatchLogHandler(log_group='cruddur')
+        LOGGER.addHandler(console_handler)
+        LOGGER.addHandler(cw_handler)
+        LOGGER.info("Test log")
+    ```

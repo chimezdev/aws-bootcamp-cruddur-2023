@@ -1,10 +1,18 @@
 from datetime import datetime, timedelta, timezone
 from opentelemetry import trace
+import logging
+
+#cloudwatch----
+def after_request(response):
+  timestamp = strftime('[%Y-%b-%d %H:%M]')
+  LOGGER.error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
+  return response
 
 tracer = trace.get_tracer("home.activities")
 
 class HomeActivities:
-  def run():
+  def run(logger):
+    logger.info("HomeActivities")
     with tracer.start_as_current_span("home-activities-mock-data"):
       span = trace.get_current_span()
       now = datetime.now(timezone.utc).astimezone()
