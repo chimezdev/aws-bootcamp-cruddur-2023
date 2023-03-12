@@ -262,3 +262,4 @@ def after_request(response):
 - Run your docker compose and visit the **backend** endpoint */rollbar/test*
 - You will see *'Hello world'* message
 - go to your rollbar account page and click to continue, then click item and you should see logs
+![rollbar log](../_docs/assets/rollbar.png)
