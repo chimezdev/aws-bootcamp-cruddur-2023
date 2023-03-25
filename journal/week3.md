@@ -1,5 +1,5 @@
 Challenges:
-this week I had to configure and setup github code space as my gitpod credit has been exhausted.
+this week, I had to configure and setup github codespace as my gitpod credit has been exhausted.
 ## Setup and configure guthub codespace to install aws cli
 - open your repository
 - click on 'code' then 'codespace' tab and click on the '+' icon to launch new codespace.
@@ -12,7 +12,7 @@ this week I had to configure and setup github code space as my gitpod credit has
 - after rebuid this will install the the packages including aws cli
 
 ## Setup AWS Credentials
-- Press "commandj+shift+P" to open command pallete and type *codespaces* and select, **Manage user secrete**
+- Press "commandj+shift+P" to open command pallete and type *codespaces* and select, **Manage user secret**
 - Select **Manage on Github** -> New secret
 - provide the credentials and specify a repository to link to aws.
 - Save and rebuild codespace.
@@ -36,7 +36,7 @@ this week I had to configure and setup github code space as my gitpod credit has
 # Week 3 — Decentralized Authentication
 Authentication is establishing that you are who you say you are.
 
-## Creating Cognito user pool
+## Creating Cognito User Group 
 - Log in to your aws cognito console
 - go to **Users pool**
 - by default 'Cognito user pool' is is selected.
@@ -51,3 +51,39 @@ Authentication is establishing that you are who you say you are.
 - Click 'Next' 
 - Give your user pool a name and select 'Use the Cognito Hosted UI'
 - Leave the other settings at default and click to create.
+
+# Integration with AWS Amplify
+AWS Amplify is a low-code solution SDK for a bunch of serverless application, a frontend JS library and also used to provision backend resources. It a hosting platform. To use the Cognito client-side is by using the Amplify JavaScript library.
+
+## Install the AWS Amplify library
+- fronm the **frontend-react-js**, run the command `npm i aws-amplify --save`
+- We used '--save' to save it as a dependency because we need it to login in prod. If it was only required during development, we use '--save-dev'
+
+## Hook up Cognito Pool to our app
+- copy and paste the command, `import { Amplify } from 'aws-amplify'` into App.js
+- configure Amplify by pasting this block of code below the amplify import statement.
+```
+    Amplify.configure({
+    "AWS_PROJECT_REGION": process.env.REACT_AWS_PROJECT_REGION,
+    "aws_cognito_identity_pool_id": process.env.REACT_APP_AWS_COGNITO_IDENTITY_POOL_ID,
+    "aws_cognito_region": process.env.REACT_APP_AWS_COGNITO_REGION,
+    "aws_user_pools_id": process.env.REACT_APP_AWS_USER_POOLS_ID,
+    "aws_user_pools_web_client_id": process.env.REACT_APP_CLIENT_ID,
+    "oauth": {},
+    Auth: {
+        // We are not using an Identity Pool
+        // identityPoolId: process.env.REACT_APP_IDENTITY_POOL_ID, // REQUIRED - Amazon Cognito Identity Pool ID
+        region: process.env.REACT_AWS_PROJECT_REGION,           // REQUIRED - Amazon Cognito Region
+        userPoolId: process.env.REACT_APP_AWS_USER_POOLS_ID,         // OPTIONAL - Amazon Cognito User Pool ID
+        userPoolWebClientId: process.env.REACT_APP_AWS_USER_POOLS_WEB_CLIENT_ID,   // OPTIONAL - Amazon Cognito Web Client ID (26-char alphanumeric string)
+        }
+    });
+```
+- then export each of the env variables that it requires
+```
+    export REACT_AWS_PROJECT_REGION=""
+    export REACT_APP_AWS_COGNITO_REGION=""
+    export REACT_APP_AWS_USER_POOLS_ID=""
+    export REACT_APP_CLIENT_ID=""
+
+```
