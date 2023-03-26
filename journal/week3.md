@@ -1,6 +1,7 @@
 Challenges:
 this week, I had to configure and setup github codespace as my gitpod credit has been exhausted.
-This week I switched back to using gitpod, but I forgot to uncomment the 'backend_url' for gitpod instead I was using that of codespace.
+This week I switched back to using gitpod, but I forgot to uncomment the 'REACT_APP_BACKEND_URL' env variable in the docker compose file, for gitpod instead I was using that of codespace. this was throwing errors until I resolved it.
+
 ## Setup and configure guthub codespace to install aws cli
 - open your repository
 - click on 'code' then 'codespace' tab and click on the '+' icon to launch new codespace.
@@ -124,7 +125,7 @@ AWS Amplify is a low-code solution SDK for a bunch of serverless application, a 
 ```
 
 - replace `import Cookies from 'js-cookie'` in *ProfileInfo.js* with `import { Auth } from 'aws-amplify'`
-- replace line *signOut* function block with this:
+- replace the *signOut* function block with this:
 ```
     const signOut = async () => {
         try {
@@ -135,3 +136,28 @@ AWS Amplify is a low-code solution SDK for a bunch of serverless application, a 
         }
     }
 ```
+
+## SignIn Page
+- open **SigninPage.js** and replace `import Cookies from 'js-cookie'` with `import { Auth } from 'aws-amplify';`
+- replace lines 15-26 with this block
+```
+    const onsubmit = async (event) => {
+    setErrors('')
+    event.preventDefault(); 
+        Auth.signIn(email, password)
+        .then(user => {
+            localStorage.setItem("access_token", user.signInUserSession.accessToken.jwtToken)
+            window.location.href = "/"
+        })
+        .catch(error => {
+          if (error.code == 'UserNotConfirmedException') {
+          window.location.href = "/confirm"
+        }
+        setErrors(error.message)
+    });
+    return false
+  }
+```
+- `do docker-compose up` to try the feature so far.
+- click to signin and you should get an error, **'username and password doesn't exist'**
+- go to cognito console and create a user manually. choose the old console to see an option not to confirm user.
