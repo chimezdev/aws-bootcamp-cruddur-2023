@@ -1,5 +1,6 @@
 Challenges:
 this week, I had to configure and setup github codespace as my gitpod credit has been exhausted.
+This week I switched back to using gitpod, but I forgot to uncomment the 'backend_url' for gitpod instead I was using that of codespace.
 ## Setup and configure guthub codespace to install aws cli
 - open your repository
 - click on 'code' then 'codespace' tab and click on the '+' icon to launch new codespace.
@@ -64,7 +65,7 @@ AWS Amplify is a low-code solution SDK for a bunch of serverless application, a 
 - configure Amplify by pasting this block of code below the amplify import statement.
 ```
     Amplify.configure({
-    "AWS_PROJECT_REGION": process.env.REACT_AWS_PROJECT_REGION,
+    "AWS_PROJECT_REGION": process.env.REACT_APP_AWS_PROJECT_REGION,
     "aws_cognito_identity_pool_id": process.env.REACT_APP_AWS_COGNITO_IDENTITY_POOL_ID,
     "aws_cognito_region": process.env.REACT_APP_AWS_COGNITO_REGION,
     "aws_user_pools_id": process.env.REACT_APP_AWS_USER_POOLS_ID,
@@ -79,11 +80,58 @@ AWS Amplify is a low-code solution SDK for a bunch of serverless application, a 
         }
     });
 ```
-- then export each of the env variables that it requires
+- Copy the block below and add them under the ***environment*** section of the **docker-compose.yml** file
 ```
-    export REACT_AWS_PROJECT_REGION=""
-    export REACT_APP_AWS_COGNITO_REGION=""
-    export REACT_APP_AWS_USER_POOLS_ID=""
-    export REACT_APP_CLIENT_ID=""
+    REACT_APP_AWS_PROJECT_REGION: "${AWS_DEFAULT_REGION}"
+    REACT_APP_AWS_COGNITO_REGION: "${AWS_DEFAULT_REGION}"
+    REACT_APP_AWS_USER_POOLS_ID: "${AWS_USER_POOLS_ID}"
+    REACT_APP_AWS_CLIENT_ID: "${AWS_APP_CLIENT_ID}"
+```
+- export each as env variable
+```
+    export REACT_APP_AWS_PROJECT_REGION="$<YOUR_CHOOSEN_REGION>"
+    gp env REACT_APP_AWS_PROJECT_REGION="$<YOUR_CHOOSEN_REGION>"
 
+```
+- repeat for each of the variables
+- get the **AWS_APP_CLIENT_ID** and **AWS_USER_POOL_ID** from the cognito user group we created
+
+# Conditionally show components based on whether user is logged in or logged out
+## Homepage
+- import amplify into the **HomeFeedPage.js** `import { Auth } from 'aws-amplify';`
+- set a state `const [user, setUser] = React.useState(null);` To be able to manage the users as variables or objects.
+- replace the *CheckAuth* function with this block
+```
+    // check if we are authenicated
+    const checkAuth = async () => {
+    Auth.currentAuthenticatedUser({
+        // Optional, By default is false. 
+        // If set to true, this call will send a 
+        // request to Cognito to get the latest user data
+        bypassCache: false 
+    })
+    .then((user) => {
+        console.log('user',user);
+        return Auth.currentAuthenticatedUser()
+    }).then((cognito_user) => {
+        setUser({
+            display_name: cognito_user.attributes.name,
+            handle: cognito_user.attributes.preferred_username
+        })
+    })
+    .catch((err) => console.log(err));
+    };
+```
+
+- replace `import Cookies from 'js-cookie'` in *ProfileInfo.js* with `import { Auth } from 'aws-amplify'`
+- replace line *signOut* function block with this:
+```
+    const signOut = async () => {
+        try {
+            await Auth.signOut({ global: true });
+            window.location.href = "/"
+        } catch (error) {
+            console.log('error signing out: ', error);
+        }
+    }
 ```
