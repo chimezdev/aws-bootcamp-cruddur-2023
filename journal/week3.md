@@ -216,3 +216,32 @@ AWS Amplify is a low-code solution SDK for a bunch of serverless application, a 
         el_errors = <div className='errors'>{errors}</div>;
     }
 ```
+- Re-build docker and go to the signup page to comfirm your implementation
+
+## Recovery page
+This page is handles a case of a user forgeting his/her password
+- open **RecoverPage.js** 
+- paste this import statement `import { Auth } from 'aws-amplify';`
+- next is this block of code which have been replaced
+```
+    const onsubmit_send_code = async (event) => {
+        event.preventDefault();
+        setErrors('')
+        Auth.forgotPassword(username)
+        .then((data) => setFormState('confirm_code') )
+        .catch((err) => setErrors(err.message) );
+        return false
+    }
+    const onsubmit_confirm_code = async (event) => {
+        event.preventDefault();
+        setErrors('')
+        if (password == passwordAgain){
+        Auth.forgotPasswordSubmit(username, code, password)
+        .then((data) => setFormState('success'))
+        .catch((err) => setErrors(err.message) );
+        } else {
+        setErrors('Passwords do not match')
+        }
+        return false
+    }
+  ```
