@@ -177,4 +177,42 @@ AWS Amplify is a low-code solution SDK for a bunch of serverless application, a 
 - replace lines 18-29 with the code in it. Replace all ni **setCognitoErrors** with `setErrors`
 
 ## Setup Confirmation Page
-- paste the Amplify import 
+- replace line 7 with `import { Auth } from 'aws-amplify';`
+- replace lines 23-53 with 
+```
+    const resend_code = async (event) => {
+        setErrors('')
+        try {
+        await Auth.resendSignUp(email);
+        console.log('code resent successfully');
+        setCodeSent(true)
+        } catch (err) {
+        // does not return a code
+        // does cognito always return english
+        // for this to be an okay match?
+        console.log(err)
+        if (err.message == 'Username cannot be empty'){
+            setCognitoErrors("You need to provide an email in order to send Resend Activiation Code")   
+        } else if (err.message == "Username/client id combination not found."){
+            setCognitoErrors("Email is invalid or cannot be found.")   
+        }
+        }
+    }
+
+    const onsubmit = async (event) => {
+        event.preventDefault();
+        setErrors('')
+        try {
+        await Auth.confirmSignUp(email, code);
+        window.location.href = "/"
+        } catch (error) {
+        setErrors(error.message)
+        }
+        return false
+    }
+
+    let el_errors;
+    if (errors){
+        el_errors = <div className='errors'>{errors}</div>;
+    }
+```
