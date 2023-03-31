@@ -161,3 +161,20 @@ AWS Amplify is a low-code solution SDK for a bunch of serverless application, a 
 - `do docker-compose up` to try the feature so far.
 - click to signin and you should get an error, **'username and password doesn't exist'**
 - go to cognito console and create a user manually. choose the old console to see an option not to confirm user.
+- we need to use aws cli to force-change password for the created user.
+```
+    aws cognito-idp admin-set-user-password \
+    --user-pool-id <your-user-pool-id> \
+    --username <username> \
+    --password <password> \
+    --permanent
+```
+- copy the user-pool-id from the console and run the command.
+- login with the user you created. 
+
+## Signup Page
+- goto the **SignupPage.js** and replace the import line 7 with `import { Auth } from 'aws-amplify';`
+- replace lines 18-29 with the code in it. Replace all ni **setCognitoErrors** with `setErrors`
+
+## Setup Confirmation Page
+- paste the Amplify import 
