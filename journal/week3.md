@@ -245,3 +245,41 @@ This page is handles a case of a user forgeting his/her password
         return false
     }
   ```
+
+  # Cognito JWT Server side Authorization
+  In the **SigninPage.js**, we saved *authorization token in our local storage. See the block of code below.
+  ```
+        Auth.signIn(email, password)
+        .then(user => {
+            localStorage.setItem("access_token", user.signInUserSession.accessToken.jwtToken)
+            window.location.href = "/"
+        })
+  ```
+- To protect our api endpoint, we need to request for this token from the user making the api call.
+- Our homepage endpoint is in line 23 in the *HomeFeedPage.js*
+  `const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/home``
+- copy this header block and add to the **`const loadData`** block(lines 21-36) of the *HomeFeedPage.js* file. 
+```headers: {
+    Authorization: `Bearer ${localStorage.getItem("access_token")}`
+  }
+```
+- update your cors to allow header by copying this block to replace lines 95-101
+```
+cors = CORS(
+  app, 
+  resources={r"/api/*": {"origins": origins}},
+  headers=['Content-Type', 'Authorization'], 
+  expose_headers='Authorization',
+  methods="OPTIONS,GET,HEAD,POST"
+)
+```
+## Reading the authorization token in backend (flask)
+- In your **app.py** do `from flask import request`
+- copy `print(request.headers.get('Authorization'))` and paste in the **def data_home()** block of the **app.py** file. Or use,
+```
+import sys
+
+app.logger.debug(
+    request.headers.get('Authorization')
+)
+``` to verify that it's being passed to the backend. However remove the block of code because you don't want people to have access to it.
