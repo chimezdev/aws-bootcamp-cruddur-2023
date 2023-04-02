@@ -282,4 +282,8 @@ import sys
 app.logger.debug(
     request.headers.get('Authorization')
 )
-``` to verify that it's being passed to the backend. However remove the block of code because you don't want people to have access to it.
+``` 
+- The above code verifies that token is being passed to the backend. However, remove the block of code because you don't want people to have access to it.
+## Validating the authorization token in the backend
+- add **Flask-AWSCognito** to the *requirements.txt* file 
+- run `pip install -r requirements.txt`
